@@ -7,6 +7,10 @@ public class PlayerMove : MonoBehaviour
     public float speed = 5.0f;
     CharacterController cc; //chractercontroller
 
+    public float gravity = -20;
+    public float jumpPower = 5;
+    private float velrocityY;
+    private int jumpCount;
     // Start is called before the first frame update
     void Start()
     {
@@ -27,9 +31,28 @@ public class PlayerMove : MonoBehaviour
         //이럴때는 벡터의 정규화를 하면 안된다.
         //dir.Normalize();
         dir = Camera.main.transform.TransformDirection(dir);
-        transform.Translate(dir * speed * Time.deltaTime);
+        //transform.Translate(dir * speed * Time.deltaTime);
 
+
+        //if(cc.isGrounded)
+        if(cc.collisionFlags == CollisionFlags.Below)//Above // Below // Sides
+        {
+            velrocityY = 0;
+            jumpCount = 0;
+        }
+        else
+        {
+            velrocityY += gravity * Time.deltaTime;
+            dir.y = velrocityY;
+        }
+        if (jumpCount < 2)
+        {
+            if (Input.GetButtonDown("Jump"))
+            {
+                velrocityY = jumpPower;
+                jumpCount++;
+            }
+        }
         cc.Move(dir * speed * Time.deltaTime);
-
     }
 }
